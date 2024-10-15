@@ -6,7 +6,7 @@ config();
 
 import path from "node:path";
 import fs from "node:fs";
-import { Command } from "@/classes/Command";
+import { Command } from "@classes/Command";
 import {REST, Routes} from "discord.js";
 
 //@ts-ignore
@@ -14,7 +14,7 @@ const commands = [];
 const folderPath: string = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(folderPath);
 
-async function loadCommands() {
+(async () => {
     for (const dir of commandFolders) {
         const commandFolder: string = path.join(folderPath, dir);
         const commandFiles: string[] = fs.readdirSync(commandFolder).filter(file => file.endsWith('.js'));
@@ -42,7 +42,6 @@ async function loadCommands() {
     await (async () => {
         try {
             console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
             // The put method is used to fully refresh all commands in the guild with the current set
             const data = await rest.put(
                 // @ts-ignore
@@ -54,11 +53,9 @@ async function loadCommands() {
             // @ts-ignore
             console.log(`Successfully reloaded ${data.length} application (/) commands.`);
         } catch (error) {
-            // And of course, make sure you catch and log any errors!
             console.error(error);
         }
     })();
 
-}
+})();
 
-loadCommands();
